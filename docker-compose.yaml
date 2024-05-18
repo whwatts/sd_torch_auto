@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16.3-bullseye
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - primary
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+  primary:
+    external: false
+    name: primary
+
+volumes:
+  db-data:
+    driver: local
+    driver_opts:
+      type: "none"
+      device: ${DB_FILE_PATH}
+      o: "bind"
