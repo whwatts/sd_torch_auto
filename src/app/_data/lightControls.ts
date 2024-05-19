@@ -159,10 +159,6 @@ export const turnOnTorch = async () => {
 		}),
 	});
 
-	const retVal = await turnOn.json();
-
-	console.log('turnOn', retVal);
-
 	const setScene = fetch(`${url}/resource/scene/${scene}`, {
 		method: 'PUT',
 		headers: {
