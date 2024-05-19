@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import PlayersComp, { PlayerType } from './_components/PlayersComp';
+import PlayersComp, { type PlayerType } from './_components/PlayersComp';
 import React from 'react';
 import TorchesComp from './_components/TorchesComp';
 

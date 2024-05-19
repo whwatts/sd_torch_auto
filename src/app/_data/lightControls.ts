@@ -1,7 +1,7 @@
 'use server';
 
 const userName = 'x5nDEcw1eVrRsNd7i41xV9E8R0qM4My5KJHcoUNG';
-const clientkey = '60C7D3CA8C2F7AFA1255145673073181';
+//const clientkey = '60C7D3CA8C2F7AFA1255145673073181';
 
 const ip = '192.168.0.188';
 const url = `https://${ip}/clip/v2`;
@@ -11,18 +11,38 @@ const header = {
 	'hue-application-key': userName,
 };
 
+type lightData = {
+	data: {
+		id: string;
+		owner: {
+			rtype: string;
+		};
+	}[];
+};
+
+type sceneData = {
+	data: {
+		id: string;
+		metadata: {
+			name: string;
+		};
+	}[];
+};
+
 const getLights = async (): Promise<string> => {
 	const lights = await fetch(`${url}/resource/grouped_light`, {
 		headers: header,
 	});
-	const lightsJson = await lights.json();
 
-	const data = lightsJson.data.filter((light: any) => {
+	const lightsJson = (await lights.json()) as lightData;
+
+	const data = lightsJson.data.filter((light) => {
 		return light.owner.rtype === 'room';
 	});
 
 	if (data.length === 1) {
-		return data[0].id;
+		const retVal = data[0];
+		if (retVal) return retVal.id;
 	}
 
 	return 'fucked';
@@ -30,20 +50,25 @@ const getLights = async (): Promise<string> => {
 
 const getScene = async (): Promise<string> => {
 	const scene = await fetch(`${url}/resource/scene`, { headers: header });
-	const sceneJson = await scene.json();
+	const sceneJson = (await scene.json()) as sceneData;
 
 	const torchScene = sceneJson.data.filter(
-		(scene: any) => scene.metadata.name === 'Test Scene 1',
+		(scene) => scene.metadata.name === 'Test Scene 1',
 	);
 
-	return torchScene.id;
+	if (torchScene.length === 1) {
+		const retVal = torchScene[0];
+		if (retVal) return retVal.id;
+	}
+
+	return 'fucked';
 };
 
 export const flickerNotification = async () => {
 	const light = await getLights();
 	const scene = await getScene();
 
-	fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -58,7 +83,7 @@ export const flickerNotification = async () => {
 
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
-	fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -73,7 +98,7 @@ export const flickerNotification = async () => {
 
 	await new Promise((resolve) => setTimeout(resolve, 250));
 
-	fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -88,7 +113,7 @@ export const flickerNotification = async () => {
 
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
-	fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -101,7 +126,7 @@ export const flickerNotification = async () => {
 		}),
 	});
 
-	fetch(`${url}/resource/scene/${scene}`, {
+	await fetch(`${url}/resource/scene/${scene}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -119,14 +144,12 @@ export const flickerNotification = async () => {
 			},
 		}),
 	});
-
-	console.log('Flicker notification sent');
 };
 
 export const turnOffTorch = async () => {
 	const light = await getLights();
 
-	const turnOff = fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -146,7 +169,7 @@ export const turnOnTorch = async () => {
 
 	console.log('light', light);
 
-	const turnOn = await fetch(`${url}/resource/grouped_light/${light}`, {
+	await fetch(`${url}/resource/grouped_light/${light}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
@@ -159,7 +182,7 @@ export const turnOnTorch = async () => {
 		}),
 	});
 
-	const setScene = fetch(`${url}/resource/scene/${scene}`, {
+	await fetch(`${url}/resource/scene/${scene}`, {
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',

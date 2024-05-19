@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { PlayerType } from './PlayersComp';
+import { type PlayerType } from './PlayersComp';
 import TrashIcon from '~/components/icons/TrashIcon';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
@@ -42,14 +42,14 @@ function TorchesComp({
 		const interval = setInterval(() => {
 			torches.forEach((torch) => {
 				if (torch.status === 'RUNNING' && torch.timeRemaining <= 0) {
-					turnOffTorch();
+					void turnOffTorch();
 					return;
 				}
 				if (
 					torch.status === 'RUNNING' &&
 					torch.timeRemaining === torch.nextNotificationTime
 				) {
-					flickerNotification();
+					void flickerNotification();
 					return;
 				}
 			});
@@ -134,7 +134,7 @@ function TorchesComp({
 				},
 			];
 		});
-		turnOnTorch();
+		void turnOnTorch();
 	};
 
 	return (
