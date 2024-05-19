@@ -12,7 +12,12 @@ import {
 	SelectValue,
 } from '~/components/ui/select';
 import { Label } from '~/components/ui/label';
-import { flickerNotification, turnOffTorch } from '../_data/lightControls';
+import {
+	flickerNotification,
+	turnOffTorch,
+	turnOnTorch,
+} from '../_data/lightControls';
+import PauseCircleIcon from '~/components/icons/PauseCircleIcon';
 
 type TorchType = {
 	timeRemaining: number;
@@ -129,6 +134,7 @@ function TorchesComp({
 				},
 			];
 		});
+		turnOnTorch();
 	};
 
 	return (
@@ -176,7 +182,7 @@ function TorchesComp({
 												pauseTorch(idx);
 											}}
 										>
-											<TrashIcon />
+											<PauseCircleIcon />
 										</Button>
 									</dd>
 								</div>
